@@ -1,87 +1,75 @@
-Constraint Satisfaction Problem (CSP) Learning Website
-Project Description
+# 🌐 Constraint Satisfaction Problem (CSP) Learning Website
 
-The Constraint Satisfaction Problem (CSP) Learning Website is a web-based application designed to help users understand the fundamental concepts of CSP in Artificial Intelligence. The project demonstrates how variables can be assigned values from a domain while satisfying specific constraints.
+🎯 **Objective**  
+To make **Constraint Satisfaction Problems (CSPs)** in Artificial Intelligence easy to understand through **interactive, visual, and practical examples**.
 
-This website provides interactive examples such as Cryptarithmetic puzzles, Map Coloring, and Room Coloring problems to help users visualize and understand how CSP works in real-world scenarios.
+---
 
-Features
+## 📖 Overview
+The **CSP Learning Website** is a web-based application that demonstrates how variables can be assigned values from a domain while satisfying specific constraints.  
 
-Interactive Cryptarithmetic Puzzle Solver
+Learners can explore CSP concepts through interactive examples such as:
+- ✍️ Cryptarithmetic puzzles  
+- 🗺️ Map Coloring problems  
+- 🏠 Room Coloring problems  
 
-Explanation of CSP components (Variables, Domain, Constraints)
+---
 
-Step-by-step CSP solving process
+## ✨ Features
+- 🔢 Interactive Cryptarithmetic Puzzle Solver  
+- 📘 Explanation of CSP components (Variables, Domain, Constraints)  
+- 🪜 Step-by-step CSP solving process  
+- 🗺️ Map Coloring demonstration  
+- 🏠 Room Coloring demonstration  
+- 🎨 Simple and easy-to-use user interface  
 
-Demonstration of Map Coloring problem
+---
 
-Demonstration of Room Coloring problem
+## 🧩 CSP Concepts Covered
+- **Variables** → Elements that need values  
+  *Example:* `S, E, N, D, M, O, R, Y`  
 
-Simple and easy-to-use user interface
+- **Domain** → Possible values for each variable  
+  *Example:* `{0,1,2,3,4,5,6,7,8,9}`  
 
-CSP Concepts Covered
-Variables
+- **Constraints** → Rules limiting assignments  
+  *Examples:*  
+  - Each letter must represent a unique digit  
+  - The first letter cannot be zero  
+  - The equation must be mathematically correct  
 
-Elements that need to be assigned values.
+---
 
-Example:
+## 🧪 Example Problems
+1. **Cryptarithmetic Problem**  
+   - Input puzzles like:  
+     - `SEND + MORE = MONEY`  
+     - `TWO + TWO = FOUR`  
+   - The solver assigns digits to letters and finds valid solutions.
 
-S, E, N, D, M, O, R, Y
-Domain
+2. **Map Coloring Problem**  
+   - Demonstrates how regions on a map can be colored so that no two adjacent regions share the same color.
 
-Possible values each variable can take.
+3. **Room Coloring Problem**  
+   - Shows how rooms in a layout can be colored while ensuring neighboring rooms have different colors.
 
-Example:
+---
 
-{0,1,2,3,4,5,6,7,8,9}
-Constraints
+## 🛠️ Technologies Used
+- **HTML** → Website structure  
+- **CSS** → Styling and layout design  
+- **JavaScript** → CSP solving logic and interactivity  
 
-Rules that limit how values can be assigned.
+---
 
-Example:
+## ▶️ How to Run the Project
+1. Download or clone the repository.  
+2. Open the project folder.  
+3. Run `index.html` in any web browser.  
 
-Each letter must represent a unique digit
+---
 
-The first letter cannot be zero
-
-The equation must be mathematically correct
-
-Example Problems
-1. Cryptarithmetic Problem
-
-Users can enter puzzles like:
-
-SEND + MORE = MONEY
-TWO + TWO = FOUR
-
-The system assigns digits to letters and finds a valid solution that satisfies all constraints.
-
-2. Map Coloring Problem
-
-This problem demonstrates how different regions on a map can be colored such that no two adjacent regions share the same color.
-
-3. Room Coloring Problem
-
-This example shows how rooms in a layout can be colored while ensuring neighboring rooms have different colors.
-
-Technologies Used
-
-HTML – Website structure
-
-CSS – Styling and layout design
-
-JavaScript – CSP solving logic and interactivity
-
-How to Run the Project
-
-Download or clone the repository.
-
-Open the project folder.
-
-Run the following file in any web browser:
-
-index.html
-Project Structure
+## 📂 Project Structure
 CSP-Website
 │
 ├── index.html
@@ -91,36 +79,27 @@ CSP-Website
 │   ├── map-after.png
 │   ├── room-before.png
 │   └── room-after.png
-🚀 Future Improvements
 
-Add interactive Map Coloring solver
 
-Visualize Backtracking algorithm step-by-step
 
-Add more CSP problems like:
+---
 
-Sudoku Solver
+## 🚀 Future Improvements
+- 🖌️ Add interactive Map Coloring solver  
+- 🔄 Visualize Backtracking algorithm step-by-step  
+- 🧩 Add more CSP problems:  
+  - Sudoku Solver  
+  - N-Queens Problem  
+  - Scheduling Problems  
+- 🌐 Add Constraint Graph visualization  
+- 🎨 Improve UI design and animations  
+- ⚡ Optimize solver using advanced CSP techniques:  
+  - Backtracking  
+  - Forward Checking  
+  - Arc Consistency  
 
-N-Queens Problem
+---
 
-Scheduling Problems
-
-Add Constraint Graph visualization
-
-Improve UI design and animations
-
-Optimize the solver using advanced CSP techniques like:
-
-Backtracking
-
-Forward Checking
-
-Arc Consistency
-
-Project Objective
-
-The objective of this project is to help students understand Constraint Satisfaction Problems in Artificial Intelligence through practical and interactive examples.
-
-Author
-
-D Sai Sri Harshit
+## 👨‍💻 Author
+**D Sai Sri Harshit**  
+📚 Passionate about making AI concepts accessible through interactive learning tools.
