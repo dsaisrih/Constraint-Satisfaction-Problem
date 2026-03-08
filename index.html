@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSP Learning Website</title>
+
+<style>
+
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    --dark-gradient: linear-gradient(135deg, #333 0%, #555 100%);
+    --light-bg: linear-gradient(135deg, #f4f6ff 0%, #e8f2ff 100%);
+    --card-bg: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+    --result-bg: linear-gradient(135deg, #eef1ff 0%, #d4e4ff 100%);
+}
+
+body{
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+margin:0;
+background: linear-gradient(135deg, #f4f6ff 0%, #e8f2ff 20%, #d4e4ff 40%, #b3d4fc 60%, #8fa8d4 80%, #6b92c8 100%);
+color: #333;
+background-attachment: fixed;
+}
+
+header{
+background: var(--primary-gradient);
+color:white;
+text-align:center;
+padding:40px;
+box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+position: relative;
+overflow: hidden;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+nav{
+background: var(--dark-gradient);
+padding:20px;
+text-align:center;
+box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+nav a{
+color:white;
+margin:25px;
+text-decoration:none;
+font-weight:bold;
+transition: all 0.3s;
+position: relative;
+}
+
+nav a:hover{
+text-decoration:none;
+color: #ffd700;
+transform: scale(1.1);
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: #ffd700;
+    transition: width 0.3s, left 0.3s;
+}
+
+nav a:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+.container{
+width:90%;
+max-width: 1200px;
+margin:auto;
+margin-top:40px;
+}
+
+.card{
+background: var(--card-bg);
+padding:30px;
+border-radius:20px;
+margin-bottom:40px;
+box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+border-left: 10px solid #667eea;
+transition: all 0.3s;
+position: relative;
+overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--accent-gradient);
+}
+
+.card:hover{
+transform: translateY(-10px);
+box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.problem{
+border-left: 10px solid #ff6b6b;
+}
+
+.problem::before {
+    background: var(--warning-gradient);
+}
+
+.img-style{
+width:350px;
+max-width: 100%;
+border-radius:15px;
+box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+transition: all 0.3s;
+border: 3px solid transparent;
+background: linear-gradient(white, white) padding-box, var(--accent-gradient) border-box;
+}
+
+.img-style:hover{
+transform: scale(1.08) rotate(2deg);
+box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+}
+
+.map-container{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+}
+
+.arrow{
+font-size:40px;
+color: #667eea;
+animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+input{
+padding:15px;
+margin:10px;
+border: 3px solid #ddd;
+border-radius:10px;
+transition: all 0.3s;
+font-size: 16px;
+background: rgba(255,255,255,0.8);
+}
+
+input:focus{
+border-color: #667eea;
+outline: none;
+box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+background: white;
+}
+
+button{
+padding:15px 25px;
+background: var(--primary-gradient);
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight: bold;
+font-size: 16px;
+transition: all 0.3s;
+box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+position: relative;
+overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:hover{
+background: var(--secondary-gradient);
+transform: translateY(-3px);
+box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.result{
+background: var(--result-bg);
+padding:20px;
+margin-top:20px;
+border-radius:15px;
+border: 2px solid #b3d4fc;
+box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+position: relative;
+}
+
+.result::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--success-gradient);
+}
+
+table{
+border-collapse: collapse;
+width: 100%;
+margin: 20px 0;
+background: white;
+border-radius: 10px;
+overflow: hidden;
+box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+th, td{
+padding: 15px;
+text-align: left;
+border-bottom: 1px solid #ddd;
+transition: background 0.3s;
+}
+
+th{
+background: var(--primary-gradient);
+color: white;
+font-weight: bold;
+font-size: 18px;
+}
+
+tr:nth-child(even){
+background: #f0f8ff;
+}
+
+tr:hover{
+background: #e0f7ff;
+transform: scale(1.01);
+}
+
+footer{
+text-align:center;
+padding:30px;
+background: var(--dark-gradient);
+color:white;
+margin-top:50px;
+box-shadow: 0 0 20px rgba(0,0,0,0.3);
+position: relative;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--accent-gradient);
+}
+
+h1, h2, h3{
+color: #333;
+margin-bottom: 20px;
+}
+
+h1{
+font-size: 3em;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+h2{
+color: #667eea;
+font-size: 2.2em;
+position: relative;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--accent-gradient);
+}
+
+h3{
+color: #333;
+font-size: 1.8em;
+}
+
+ul{
+list-style-type: none;
+padding: 0;
+}
+
+ul li{
+margin: 15px 0;
+font-size: 18px;
+}
+
+ul li b{
+color: #667eea;
+font-size: 20px;
+}
+
+p{
+font-size: 18px;
+line-height: 1.6;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Constraint Satisfaction Problems (CSP)</h1>
+<p>Learn CSP with Interactive Examples</p>
+</header>
+
+<nav>
+<a href="#home">Home</a>
+<a href="#crypt">Cryptarithmetic</a>
+<a href="#map">Map Coloring</a>
+<a href="#room">Room Coloring</a>
+</nav>
+
+<div class="container">
+
+<!-- HOME -->
+
+<div id="home" class="card">
+
+<h2>🧠 What is CSP?</h2>
+
+<p>
+A Constraint Satisfaction Problem (CSP) is a problem where we must assign values
+to variables while satisfying constraints.
+</p>
+
+<h3>Main Components</h3>
+
+<ul>
+<li><b>Variables</b> – Items to assign values</li>
+<li><b>Domain</b> – Possible values</li>
+<li><b>Constraints</b> – Rules restricting values</li>
+</ul>
+
+<p>
+Examples include map coloring, cryptarithmetic puzzles, and scheduling problems.
+</p>
+
+</div>
+
+<!-- CRYPTARITHMETIC -->
+
+<div id="crypt" class="card problem">
+
+<h2>🔢 Cryptarithmetic Solver</h2>
+
+<p>Enter your puzzle:</p>
+
+<input id="word1" placeholder="WORD 1">
++
+<input id="word2" placeholder="WORD 2">
+=
+<input id="word3" placeholder="RESULT">
+
+<br><br>
+
+<button onclick="solveCrypt()">Solve Puzzle</button>
+<button onclick="loadExample()">Load Example Puzzle</button>
+
+<div id="crypt-result" class="result"></div>
+
+</div>
+
+<!-- MAP COLORING -->
+
+<div id="map" class="card problem">
+
+<h2>🗺️ Map Coloring Problem</h2>
+
+<p>Adjacent regions cannot have the same color.</p>
+
+<h3>Map Coloring</h3>
+
+<div class="map-container">
+
+<div>
+<h4>Before Coloring</h4>
+<img src="map-before.png" class="img-style">
+</div>
+
+<div class="arrow">➡</div>
+
+<div>
+<h4>After Coloring</h4>
+<img src="map-after.png" class="img-style">
+</div>
+
+</div>
+
+<br>
+
+<h3>Constraint Graph</h3>
+
+<div class="map-container">
+
+<div>
+<h4>Graph Before</h4>
+<img src="map-graph-before.png" class="img-style">
+</div>
+
+<div class="arrow">➡</div>
+
+<div>
+<h4>Graph After</h4>
+<img src="map-graph-after.png" class="img-style">
+</div>
+
+</div>
+
+<br>
+
+<button onclick="showMap()">Show CSP Details</button>
+
+<div id="map-result" class="result"></div>
+
+</div>
+
+<!-- ROOM COLORING -->
+
+<div id="room" class="card problem">
+
+<h2>🏠 Room Coloring Problem</h2>
+
+<p>Adjacent rooms must have different colors.</p>
+
+<h3>Room Layout</h3>
+
+<div class="map-container">
+
+<div>
+<h4>Before Coloring</h4>
+<img src="room-before.png" class="img-style">
+</div>
+
+<div class="arrow">➡</div>
+
+<div>
+<h4>After Coloring</h4>
+<img src="room-after.png" class="img-style">
+</div>
+
+</div>
+
+<br>
+
+<h3>Constraint Graph</h3>
+
+<div class="map-container">
+
+<div>
+<h4>Graph Before</h4>
+<img src="room-graph-before.png" class="img-style">
+</div>
+
+<div class="arrow">➡</div>
+
+<div>
+<h4>Graph After</h4>
+<img src="room-graph-after.png" class="img-style">
+</div>
+
+</div>
+
+<br>
+
+<button onclick="showRoom()">Show CSP Details</button>
+
+<div id="room-result" class="result"></div>
+
+</div>
+
+</div>
+
+<footer>
+<p>© CSP Learning Website</p>
+</footer>
+
+<script>
+
+const mapVariables = ['WA', 'NT', 'Q', 'NSW', 'V', 'SA', 'T'];
+const mapSolution = {
+    'WA': 'Red',
+    'NT': 'Green',
+    'Q': 'Red',
+    'NSW': 'Blue',
+    'V': 'Green',
+    'SA': 'Blue',
+    'T': 'Red'
+};
+
+const roomVariables = ['Kitchen', 'Living Room', 'Bedroom1', 'Bedroom2', 'Bathroom', 'Hall', 'Dining Room', 'Guest Room', 'Store Room', 'Library', 'Study Room'];
+const roomSolution = {
+    'Kitchen': 'Red',
+    'Living Room': 'Green',
+    'Bedroom1': 'Blue',
+    'Bedroom2': 'Red',
+    'Bathroom': 'Green',
+    'Hall': 'Blue',
+    'Dining Room': 'Red',
+    'Guest Room': 'Green',
+    'Store Room': 'Blue',
+    'Library': 'Red',
+    'Study Room': 'Green'
+};
+
+function loadExample(){
+    document.getElementById("word1").value = "SEND";
+    document.getElementById("word2").value = "MORE";
+    document.getElementById("word3").value = "MONEY";
+    solveCrypt();
+}
+
+function solveCrypt(){
+
+    let w1 = document.getElementById("word1").value.toUpperCase();
+    let w2 = document.getElementById("word2").value.toUpperCase();
+    let w3 = document.getElementById("word3").value.toUpperCase();
+
+    if (!w1 || !w2 || !w3) {
+        document.getElementById("crypt-result").innerHTML = "Please enter all three words.";
+        return;
+    }
+
+    let letters = [...new Set((w1 + w2 + w3).split(""))];
+
+    if (letters.length > 10) {
+        document.getElementById("crypt-result").innerHTML = "Too many unique letters (max 10).";
+        return;
+    }
+
+    let used = new Set();
+    let map = {};
+    let found = false;
+
+    function backtrack(index) {
+        if (index === letters.length) {
+            // check leading zeros
+            if (map[w1[0]] === 0 || map[w2[0]] === 0 || map[w3[0]] === 0) return false;
+
+            let n1 = parseInt(w1.split('').map(l => map[l]).join(''));
+            let n2 = parseInt(w2.split('').map(l => map[l]).join(''));
+            let n3 = parseInt(w3.split('').map(l => map[l]).join(''));
+
+            if (n1 + n2 === n3) {
+                found = true;
+                return true;
+            }
+            return false;
+        }
+
+        let letter = letters[index];
+        for (let d = 0; d <= 9; d++) {
+            if (used.has(d)) continue;
+            map[letter] = d;
+            used.add(d);
+            if (backtrack(index + 1)) return true;
+            used.delete(d);
+            delete map[letter];
+        }
+        return false;
+    }
+
+    backtrack(0);
+
+    let resultHTML = '<h3>CSP Components</h3>';
+    resultHTML += '<ul>';
+    resultHTML += `<li><b>Variables:</b> Letters ${letters.join(', ')}</li>`;
+    resultHTML += '<li><b>Domain:</b> Digits 0-9</li>';
+    resultHTML += `<li><b>Constraints:</b> All letters have unique digits, leading letters (${w1[0]}, ${w2[0]}, ${w3[0]}) not zero, and ${w1} + ${w2} = ${w3}</li>`;
+    resultHTML += '</ul>';
+
+    if (found) {
+        resultHTML += '<h3>Solution Found</h3>';
+        resultHTML += '<table border="1" style="border-collapse: collapse; margin: 10px 0;">';
+        resultHTML += '<tr><th>Letter</th><th>Digit</th></tr>';
+        letters.forEach(letter => {
+            resultHTML += `<tr><td>${letter}</td><td>${map[letter]}</td></tr>`;
+        });
+        resultHTML += '</table>';
+        let n1 = parseInt(w1.split('').map(l => map[l]).join(''));
+        let n2 = parseInt(w2.split('').map(l => map[l]).join(''));
+        let n3 = parseInt(w3.split('').map(l => map[l]).join(''));
+        resultHTML += `<p><b>Equation:</b> ${n1} + ${n2} = ${n3}</p>`;
+    } else {
+        resultHTML += '<h3>No solution found.</h3>';
+    }
+
+    document.getElementById("crypt-result").innerHTML = resultHTML;
+}
+
+function showMap(){
+
+    let resultHTML = '<h3>CSP Components</h3>';
+    resultHTML += '<ul>';
+    resultHTML += `<li><b>Variables:</b> Regions (${mapVariables.join(', ')})</li>`;
+    resultHTML += '<li><b>Domain:</b> {Red, Green, Blue}</li>';
+    resultHTML += '<li><b>Constraints:</b> Adjacent regions cannot share the same color</li>';
+    resultHTML += '</ul>';
+    resultHTML += '<h3>Example Solution</h3>';
+    resultHTML += '<table border="1" style="border-collapse: collapse; margin: 10px 0;">';
+    resultHTML += '<tr><th>Region</th><th>Color</th></tr>';
+    mapVariables.forEach(region => {
+        resultHTML += `<tr><td>${region}</td><td>${mapSolution[region]}</td></tr>`;
+    });
+    resultHTML += '</table>';
+
+    document.getElementById("map-result").innerHTML = resultHTML;
+}
+
+function showRoom(){
+
+    let resultHTML = '<h3>CSP Components</h3>';
+    resultHTML += '<ul>';
+    resultHTML += `<li><b>Variables:</b> Rooms (${roomVariables.join(', ')})</li>`;
+    resultHTML += '<li><b>Domain:</b> {Red, Green, Blue}</li>';
+    resultHTML += '<li><b>Constraints:</b> Adjacent rooms must have different colors</li>';
+    resultHTML += '</ul>';
+    resultHTML += '<h3>Example Solution</h3>';
+    resultHTML += '<table border="1" style="border-collapse: collapse; margin: 10px 0;">';
+    resultHTML += '<tr><th>Room</th><th>Color</th></tr>';
+    roomVariables.forEach(room => {
+        resultHTML += `<tr><td>${room}</td><td>${roomSolution[room]}</td></tr>`;
+    });
+    resultHTML += '</table>';
+
+    document.getElementById("room-result").innerHTML = resultHTML;
+}
+
+</script>
+
+</body>
+</html>
