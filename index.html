@@ -460,7 +460,7 @@ Examples include map coloring, cryptarithmetic puzzles, and scheduling problems.
 
 <br>
 
-<button onclick="showMap()">Show CSP Details</button>
+<button onclick="solveMap()">Solve Map Coloring</button>
 
 <div id="map-result" class="result"></div>
 
@@ -514,7 +514,7 @@ Examples include map coloring, cryptarithmetic puzzles, and scheduling problems.
 
 <br>
 
-<button onclick="showRoom()">Show CSP Details</button>
+<button onclick="solveRoom()">Solve Room Coloring</button>
 
 <div id="room-result" class="result"></div>
 
@@ -539,6 +539,18 @@ const mapSolution = {
     'T': 'Red'
 };
 
+const mapConstraints = {
+    'WA': ['NT', 'SA'],
+    'NT': ['WA', 'SA', 'Q'],
+    'Q': ['NT', 'SA', 'NSW'],
+    'NSW': ['Q', 'SA', 'V'],
+    'V': ['SA', 'NSW'],
+    'SA': ['WA', 'NT', 'Q', 'NSW', 'V'],
+    'T': ['V']
+};
+
+const colors = ['Red', 'Green', 'Blue'];
+
 const roomVariables = ['Kitchen', 'Living Room', 'Bedroom1', 'Bedroom2', 'Bathroom', 'Hall', 'Dining Room', 'Guest Room', 'Store Room', 'Library', 'Study Room'];
 const roomSolution = {
     'Kitchen': 'Red',
@@ -554,6 +566,20 @@ const roomSolution = {
     'Study Room': 'Green'
 };
 
+const roomConstraints = {
+    'Kitchen': ['Living Room', 'Dining Room'],
+    'Living Room': ['Kitchen', 'Dining Room', 'Hall', 'Bedroom1'],
+    'Bedroom1': ['Living Room', 'Bedroom2', 'Bathroom'],
+    'Bedroom2': ['Bedroom1', 'Bathroom'],
+    'Bathroom': ['Bedroom1', 'Bedroom2', 'Hall'],
+    'Hall': ['Living Room', 'Bathroom', 'Dining Room', 'Guest Room', 'Library'],
+    'Dining Room': ['Kitchen', 'Living Room', 'Hall'],
+    'Guest Room': ['Hall', 'Study Room'],
+    'Store Room': ['Library'],
+    'Library': ['Hall', 'Store Room', 'Study Room'],
+    'Study Room': ['Guest Room', 'Library']
+};
+
 function loadExample(){
     document.getElementById("word1").value = "SEND";
     document.getElementById("word2").value = "MORE";
@@ -563,108 +589,258 @@ function loadExample(){
 
 function solveCrypt(){
 
-    let w1 = document.getElementById("word1").value.toUpperCase();
-    let w2 = document.getElementById("word2").value.toUpperCase();
-    let w3 = document.getElementById("word3").value.toUpperCase();
+let w1=document.getElementById("word1").value.toUpperCase();
+let w2=document.getElementById("word2").value.toUpperCase();
+let w3=document.getElementById("word3").value.toUpperCase();
 
-    if (!w1 || !w2 || !w3) {
-        document.getElementById("crypt-result").innerHTML = "Please enter all three words.";
-        return;
-    }
+if(!w1||!w2||!w3){
+document.getElementById("crypt-result").innerHTML="Please enter all three words.";
+return;
+}
 
-    let letters = [...new Set((w1 + w2 + w3).split(""))];
+let letters=[...new Set((w1+w2+w3).split(""))];
 
-    if (letters.length > 10) {
-        document.getElementById("crypt-result").innerHTML = "Too many unique letters (max 10).";
-        return;
-    }
+if(letters.length>10){
+document.getElementById("crypt-result").innerHTML="Too many unique letters (max 10).";
+return;
+}
 
-    let used = new Set();
-    let map = {};
+let used=new Set();
+let map={};
+let found=false;
+
+let steps=[];
+let stepCount=1;
+
+function backtrack(index){
+
+if(index===letters.length){
+
+if(map[w1[0]]===0||map[w2[0]]===0||map[w3[0]]===0) return false;
+
+let n1=parseInt(w1.split('').map(l=>map[l]).join(''));
+let n2=parseInt(w2.split('').map(l=>map[l]).join(''));
+let n3=parseInt(w3.split('').map(l=>map[l]).join(''));
+
+if(n1+n2===n3){
+found=true;
+return true;
+}
+
+return false;
+}
+
+let letter=letters[index];
+
+for(let d=0;d<=9;d++){
+
+if(used.has(d)) continue;
+
+map[letter]=d;
+used.add(d);
+
+if(backtrack(index+1)) return true;
+
+used.delete(d);
+delete map[letter];
+}
+
+return false;
+}
+
+backtrack(0);
+
+let resultHTML="<h3>CSP Components</h3>";
+resultHTML+="<ul>";
+resultHTML+=`<li><b>Variables:</b> ${letters.join(", ")}</li>`;
+resultHTML+="<li><b>Domain:</b> Digits 0-9</li>";
+resultHTML+=`<li><b>Constraint:</b> ${w1} + ${w2} = ${w3}</li>`;
+resultHTML+="</ul>";
+
+if(found){
+
+let n1=parseInt(w1.split('').map(l=>map[l]).join(''));
+let n2=parseInt(w2.split('').map(l=>map[l]).join(''));
+let n3=parseInt(w3.split('').map(l=>map[l]).join(''));
+
+resultHTML+="<h3>Solution</h3>";
+
+resultHTML+="<table>";
+resultHTML+="<tr><th>Letter</th><th>Digit</th></tr>";
+
+letters.forEach(l=>{
+resultHTML+=`<tr><td>${l}</td><td>${map[l]}</td></tr>`;
+});
+
+resultHTML+="</table>";
+
+resultHTML+=`<p><b>Equation:</b> ${n1} + ${n2} = ${n3}</p>`;
+
+resultHTML+="<h3>Traditional Method</h3>";
+
+resultHTML+="<pre>";
+resultHTML+="    "+w1+"\n";
+resultHTML+="+   "+w2+"\n";
+resultHTML+="-----------\n";
+resultHTML+="   "+w3+"\n";
+resultHTML+="</pre>";
+
+resultHTML+="<pre>";
+resultHTML+="    "+n1+"\n";
+resultHTML+="+   "+n2+"\n";
+resultHTML+="-----------\n";
+resultHTML+="   "+n3+"\n";
+resultHTML+="</pre>";
+
+resultHTML += "<h3>Column Equations</h3>";
+
+let carry = 0;
+let maxLen = Math.max(w1.length, w2.length, w3.length);
+
+for (let i = 0; i < maxLen; i++) {
+
+    let l1 = w1[w1.length - 1 - i] || "";
+    let l2 = w2[w2.length - 1 - i] || "";
+    let l3 = w3[w3.length - 1 - i] || "";
+
+    let v1 = l1 ? map[l1] : 0;
+    let v2 = l2 ? map[l2] : 0;
+    let v3 = l3 ? map[l3] : 0;
+
+    let sum = v1 + v2 + carry;
+    let newCarry = Math.floor(sum / 10);
+
+    resultHTML += `<p><b>Column ${i+1}:</b> ${l1 || 0} + ${l2 || 0} + carry(${carry}) = ${l3}</p>`;
+    resultHTML += `<p>${v1} + ${v2} + ${carry} = ${v3} + 10*${newCarry}</p>`;
+
+    carry = newCarry;
+}
+
+}else{
+
+resultHTML+="<h3>No solution found</h3>";
+
+}
+
+document.getElementById("crypt-result").innerHTML=resultHTML;
+
+}
+
+function solveMap() {
+    let assignment = {};
+    let steps = [];
+    let stepCount = 1;
     let found = false;
 
-    function backtrack(index) {
-        if (index === letters.length) {
-            // check leading zeros
-            if (map[w1[0]] === 0 || map[w2[0]] === 0 || map[w3[0]] === 0) return false;
-
-            let n1 = parseInt(w1.split('').map(l => map[l]).join(''));
-            let n2 = parseInt(w2.split('').map(l => map[l]).join(''));
-            let n3 = parseInt(w3.split('').map(l => map[l]).join(''));
-
-            if (n1 + n2 === n3) {
-                found = true;
-                return true;
+    function isConsistent(varName, color) {
+        for (let neighbor of mapConstraints[varName]) {
+            if (assignment[neighbor] === color) {
+                return false;
             }
-            return false;
+        }
+        return true;
+    }
+
+    function backtrack(index) {
+        if (index === mapVariables.length) {
+            found = true;
+            return true;
         }
 
-        let letter = letters[index];
-        for (let d = 0; d <= 9; d++) {
-            if (used.has(d)) continue;
-            map[letter] = d;
-            used.add(d);
-            if (backtrack(index + 1)) return true;
-            used.delete(d);
-            delete map[letter];
+        let varName = mapVariables[index];
+
+        for (let color of colors) {
+
+            let consistent = isConsistent(varName, color);
+
+            steps.push({
+                step: stepCount++,
+                variable: varName,
+                color: color,
+                status: consistent ? "Valid" : "Rejected"
+            });
+
+            if (consistent) {
+                assignment[varName] = color;
+
+                if (backtrack(index + 1)) return true;
+
+                delete assignment[varName];
+
+                steps.push({
+                    step: stepCount++,
+                    variable: varName,
+                    color: color,
+                    status: "Backtrack"
+                });
+            }
         }
+
         return false;
     }
 
     backtrack(0);
 
-    let resultHTML = '<h3>CSP Components</h3>';
-    resultHTML += '<ul>';
-    resultHTML += `<li><b>Variables:</b> Letters ${letters.join(', ')}</li>`;
-    resultHTML += '<li><b>Domain:</b> Digits 0-9</li>';
-    resultHTML += `<li><b>Constraints:</b> All letters have unique digits, leading letters (${w1[0]}, ${w2[0]}, ${w3[0]}) not zero, and ${w1} + ${w2} = ${w3}</li>`;
-    resultHTML += '</ul>';
+    let resultHTML = "<h3>CSP Components</h3>";
+
+resultHTML+="<table>";
+resultHTML+="<tr><th>Component</th><th>Description</th></tr>";
+
+resultHTML+=`<tr>
+<td>Variables</td>
+<td>${mapVariables.join(", ")}</td>
+</tr>`;
+
+resultHTML+=`<tr>
+<td>Domain</td>
+<td>{Red, Green, Blue}</td>
+</tr>`;
+
+resultHTML+=`<tr>
+<td>Constraints</td>
+<td>Adjacent regions cannot have the same color</td>
+</tr>`;
+
+resultHTML+="</table>";
+
+resultHTML+="<h3>Solution</h3>";
 
     if (found) {
-        resultHTML += '<h3>Solution Found</h3>';
-        resultHTML += '<table border="1" style="border-collapse: collapse; margin: 10px 0;">';
-        resultHTML += '<tr><th>Letter</th><th>Digit</th></tr>';
-        letters.forEach(letter => {
-            resultHTML += `<tr><td>${letter}</td><td>${map[letter]}</td></tr>`;
+        resultHTML += "<table>";
+        resultHTML += "<tr><th>Region</th><th>Color</th></tr>";
+
+        mapVariables.forEach(r => {
+            resultHTML += `<tr><td>${r}</td><td>${assignment[r]}</td></tr>`;
         });
-        resultHTML += '</table>';
-        let n1 = parseInt(w1.split('').map(l => map[l]).join(''));
-        let n2 = parseInt(w2.split('').map(l => map[l]).join(''));
-        let n3 = parseInt(w3.split('').map(l => map[l]).join(''));
-        resultHTML += `<p><b>Equation:</b> ${n1} + ${n2} = ${n3}</p>`;
-    } else {
-        resultHTML += '<h3>No solution found.</h3>';
+
+        resultHTML += "</table>";
     }
 
-    document.getElementById("crypt-result").innerHTML = resultHTML;
-}
+    resultHTML += "<h3>Backtracking Steps</h3>";
 
-function showMap(){
+    resultHTML += "<table>";
+    resultHTML += "<tr><th>Step</th><th>Variable</th><th>Color Tried</th><th>Status</th></tr>";
 
-    let resultHTML = '<h3>CSP Components</h3>';
-    resultHTML += '<ul>';
-    resultHTML += `<li><b>Variables:</b> Regions (${mapVariables.join(', ')})</li>`;
-    resultHTML += '<li><b>Domain:</b> {Red, Green, Blue}</li>';
-    resultHTML += '<li><b>Constraints:</b> Adjacent regions cannot share the same color</li>';
-    resultHTML += '</ul>';
-    resultHTML += '<h3>Example Solution</h3>';
-    resultHTML += '<table border="1" style="border-collapse: collapse; margin: 10px 0;">';
-    resultHTML += '<tr><th>Region</th><th>Color</th></tr>';
-    mapVariables.forEach(region => {
-        resultHTML += `<tr><td>${region}</td><td>${mapSolution[region]}</td></tr>`;
+    steps.forEach(s => {
+        resultHTML += `<tr>
+        <td>${s.step}</td>
+        <td>${s.variable}</td>
+        <td>${s.color}</td>
+        <td>${s.status}</td>
+        </tr>`;
     });
-    resultHTML += '</table>';
+
+    resultHTML += "</table>";
 
     document.getElementById("map-result").innerHTML = resultHTML;
 }
-
 function showRoom(){
 
     let resultHTML = '<h3>CSP Components</h3>';
     resultHTML += '<ul>';
     resultHTML += `<li><b>Variables:</b> Rooms (${roomVariables.join(', ')})</li>`;
-    resultHTML += '<li><b>Domain:</b> {Red, Green, Blue}</li>';
-    resultHTML += '<li><b>Constraints:</b> Adjacent rooms must have different colors</li>';
+    resultHTML += '<li><b>Domain:</b> {Red, Green, Blue}</li>`';
+    resultHTML += '<li><b>Constraints:</b> Adjacent rooms must have different colors</li>`';
     resultHTML += '</ul>';
     resultHTML += '<h3>Example Solution</h3>';
     resultHTML += '<table border="1" style="border-collapse: collapse; margin: 10px 0;">';
@@ -677,6 +853,118 @@ function showRoom(){
     document.getElementById("room-result").innerHTML = resultHTML;
 }
 
+function solveRoom() {
+
+    let assignment = {};
+    let steps = [];
+    let stepCount = 1;
+    let found = false;
+
+    function isConsistent(varName, color) {
+        for (let neighbor of roomConstraints[varName]) {
+            if (assignment[neighbor] === color) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function backtrack(index) {
+
+        if (index === roomVariables.length) {
+            found = true;
+            return true;
+        }
+
+        let varName = roomVariables[index];
+
+        for (let color of colors) {
+
+            let consistent = isConsistent(varName, color);
+
+            steps.push({
+                step: stepCount++,
+                variable: varName,
+                color: color,
+                status: consistent ? "Valid" : "Rejected"
+            });
+
+            if (consistent) {
+
+                assignment[varName] = color;
+
+                if (backtrack(index + 1)) return true;
+
+                delete assignment[varName];
+
+                steps.push({
+                    step: stepCount++,
+                    variable: varName,
+                    color: color,
+                    status: "Backtrack"
+                });
+            }
+        }
+
+        return false;
+    }
+
+    backtrack(0);
+
+    let resultHTML = "<h3>CSP Components</h3>";
+
+resultHTML+="<table>";
+resultHTML+="<tr><th>Component</th><th>Description</th></tr>";
+
+resultHTML+=`<tr>
+<td>Variables</td>
+<td>${roomVariables.join(", ")}</td>
+</tr>`;
+
+resultHTML+=`<tr>
+<td>Domain</td>
+<td>{Red, Green, Blue}</td>
+</tr>`;
+
+resultHTML+=`<tr>
+<td>Constraints</td>
+<td>Adjacent rooms must have different colors</td>
+</tr>`;
+
+resultHTML+="</table>";
+
+resultHTML+="<h3>Solution</h3>";
+
+    if (found) {
+
+        resultHTML += "<table>";
+        resultHTML += "<tr><th>Room</th><th>Color</th></tr>";
+
+        roomVariables.forEach(r => {
+            resultHTML += `<tr><td>${r}</td><td>${assignment[r]}</td></tr>`;
+        });
+
+        resultHTML += "</table>";
+    }
+
+    resultHTML += "<h3>Backtracking Steps</h3>";
+
+    resultHTML += "<table>";
+    resultHTML += "<tr><th>Step</th><th>Room</th><th>Color Tried</th><th>Status</th></tr>";
+
+    steps.forEach(s => {
+        resultHTML += `<tr>
+        <td>${s.step}</td>
+        <td>${s.variable}</td>
+        <td>${s.color}</td>
+        <td>${s.status}</td>
+        </tr>`;
+    });
+
+    resultHTML += "</table>";
+
+    document.getElementById("room-result").innerHTML = resultHTML;
+}
 </script>
 
 </body>
